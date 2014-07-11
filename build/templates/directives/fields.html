@@ -1,0 +1,20 @@
+<div>
+    <table border="1" cellpadding="1" cellspacing="0">
+        <thead>
+            <tr>
+                <td>Field</td>
+                <td>Value</td>
+                <td>Type</td>
+                <td>Extra</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="field in fields">
+                <td>{{field.name}}</td>
+                <td>{{field.value}}</td>
+                <td><select class="value" data-ng-model="field.type" data-ng-options="type.name for type in types"></select></td>
+                <td><input type="text" data-ng-model="field.extra" data-ng-disabled="!field.type.special && (field.type.name == 'model' || field.type.name == 'metadata')"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
