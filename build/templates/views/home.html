@@ -11,4 +11,21 @@
             <button type="submit" data-ng-disabled="!form.$valid" >CONNECT</button>
         </div>
     </form>
+    
+    <div id="FIELDS">
+        <div class="item" data-ng-repeat="field in fields">{{field.name}}</div>
+    </div>
+
+    <table id="ROWS" border="1" cellpadding="1" cellspacing="0">
+        <thead>
+            <tr><td data-ng-repeat="field in fields">{{field.name}}</td></tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="row in rows">
+                <td data-ng-repeat="field in fields">{{row[field.name]}}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    
 </div>

@@ -1,0 +1,22 @@
+<div>
+    <table border="1" cellpadding="1" cellspacing="0">
+        <thead>
+            <tr>
+                <td>Block</td>
+                <td>Floor</td>
+                <td>Name</td>
+                <td>Meta</td>
+                <td>Data</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="row in metadata">
+                <td>{{row.block}}</td>
+                <td>{{row.floor}}</td>
+                <td>{{row.name}}</td>
+                <td>{{row.meta}}</td>
+                <td>{{row.data}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

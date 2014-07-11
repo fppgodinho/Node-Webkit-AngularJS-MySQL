@@ -1,0 +1,15 @@
+<div>
+    <div>
+        <a data-ng-href="{{export}}" target="_blank">EXPORT</a>
+    </div>
+    <table border="1" cellpadding="1" cellspacing="0">
+        <thead>
+            <tr><td data-ng-repeat="field in fields">{{field.type.name}}({{field.name}})</td></tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="row in rows">
+                <td data-ng-repeat="field in fields">{{row[field.name]}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

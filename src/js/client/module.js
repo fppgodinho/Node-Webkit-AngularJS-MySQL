@@ -1,11 +1,6 @@
 'use strict';
 
-angular.module('www.tekuchi.converter', ['ngRoute']);
-
-angular.module('www.tekuchi.converter').config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/',                    {controller: 'home',                templateUrl:'templates/views/home.html',           reloadOnSearch:false});
-    $routeProvider.otherwise({redirectTo: '/'});
-}]);
+angular.module('www.tekuchi.converter', []);
 
 /**
  * 

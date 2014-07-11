@@ -11,21 +11,68 @@
 
 // -----------------------------------------------------------------------------
 //{ region STRUCTURE
-#HOME                                                                           {
-  form                                                                          {
+#MAIN                                                                           {
+  button:disabled                                                               {
+    opacity: 0.1;
+  }
+  
+  #MENU                                                                         {
     display:        flex;
-    flex-direction: column;
+    flex-direction: row;
     
-    .label                                                                      {
-      display:  inline-block;
-      width:    100px;
+  }
+  
+  #CONNECTION                                                                   {
+    form                                                                        {
+      display:        flex;
+      flex-direction: column;
+
+      .label                                                                    {
+        display:  inline-block;
+        width:    100px;
+      }
+
+      input.ng-invalid                                                          {
+        background-color: #FA787E;
+      }
+      input.ng-valid                                                            {
+        //background-color: #78FA89;
+      }
     }
-    
-    input.ng-invalid                                                            {
-      background-color: #FA787E;
+  }
+
+  #RAW                                                                          {
+    thead                                                                       {
     }
-    input.ng-valid                                                              {
-      //background-color: #78FA89;
+    tbody                                                                       {
+    }
+  }
+  
+  #FIELDS                                                                       {
+    thead                                                                       {
+    }
+    tbody                                                                       {
+    }
+  }
+  
+  #NORMAL                                                                       {
+    thead                                                                       {
+    }
+    tbody                                                                       {
+    }
+  }
+  
+  #METADATA                                                                     {
+    thead                                                                       {
+    }
+    tbody                                                                       {
+    }
+  }
+  
+  #MODELS                                                                       {
+    thead                                                                       {
+    }
+    tbody                                                                       {
     }
   }
 }
