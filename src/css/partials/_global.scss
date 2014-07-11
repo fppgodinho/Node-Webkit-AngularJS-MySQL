@@ -1,0 +1,30 @@
+// -----------------------------------------------------------------------------
+//{ region UTILITIES
+@-moz-document url-prefix(http), url-prefix(file)                               {
+    img:-moz-broken                                                             {
+        -moz-force-broken-image-icon:1;
+        width:24px;
+        height:24px;
+    }
+}
+//} endregion
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+//{ region HTML
+html                                                                            {
+  @include box-sizing(border-box);
+  @include stretch(0, 0, 0, 0);
+  position: relative;
+  margin:         0px;
+  border:         0px;
+}
+
+body                                                                            {
+  @extend html;
+  overflow:       scroll;
+  font-family:    "Open Sans",​Arial,​serif;
+  font-size:      $font-size-normal;
+}
+//} endregion
+// -----------------------------------------------------------------------------

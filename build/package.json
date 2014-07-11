@@ -1,0 +1,21 @@
+{
+  "node-main":      "js/server.js",
+  "main":           "index.html",
+  "name":           "Tekuchi-Converter",
+  "description":    "Tekuchi Converter application used to convert legacy apartments data to the portal format",
+  "version":        "0.0.0",
+  "keywords":       [ "node-webkit"],
+  "window":         {
+    "title":            "Tekuchi Converter",
+    "icon":             "media/16x16.png",
+    "toolbar":          false,
+    "frame":            true,
+    "width":            800,
+    "height":           500,
+    "position":         "center"
+  },
+  "dependencies":   {
+    "mysql":            "^2.3.2",
+    "mysql2":           "^0.12.3"
+  }
+}

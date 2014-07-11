@@ -1,0 +1,14 @@
+<div id="HOME">
+    <form name="form" data-ng-submit="!form.$valid || connect()" novalidate>
+        <div><div class="label">Address:</div>  <input type="text"      data-ng-model="server.address"      required /></div>
+        <div><div class="label">Port:</div>     <input type="number"    data-ng-model="server.port"         required /></div>
+        <div><div class="label">Database:</div> <input type="text"      data-ng-model="server.database"     required /></div>
+        <div><div class="label">Table:</div>    <input type="text"      data-ng-model="server.table"        required /></div>
+        <div><div class="label">User:</div>     <input type="text"      data-ng-model="server.username"     required /></div>
+        <div><div class="label">Password:</div> <input type="text"      data-ng-model="server.password"     required /></div>
+        <div>
+            <button type="button" data-ng-disabled="!form.$dirty" data-ng-click="reset()">RESET</button>
+            <button type="submit" data-ng-disabled="!form.$valid" >CONNECT</button>
+        </div>
+    </form>
+</div>
