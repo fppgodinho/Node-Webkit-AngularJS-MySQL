@@ -3,7 +3,6 @@ Node-Webkit-AngularJS-MySQL
 
 A testing project that explores the combination of Node-Webkit with AngularJS and MySQL
 
-
 INSTALLATION
 ===========================
 1) Run npm install at the / folder.
