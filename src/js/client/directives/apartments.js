@@ -1,11 +1,10 @@
-angular.module('www.tekuchi.converter').directive('normal', [function()         {
+angular.module('www.tekuchi.converter').directive('apartments', [function()     {
     return {
         restrict:       'E',
         scope:          {},
-        templateUrl:    'templates/directives/normal.html',
+        templateUrl:    'templates/directives/apartments.html',
         controller:     ['$scope', 'dataProvider',
             function($scope, dataProvider)                                      {
-                var csv     = require('to-csv');
                 //
                 $scope.fields       = [];
                 $scope.rows         = [];
@@ -39,11 +38,8 @@ angular.module('www.tekuchi.converter').directive('normal', [function()         
                         }
                         data.push(item);
                     }
-                    if (data.length)                                            {
-                        var csvData = csv(data);
-                        // $scope.export = "data:text/json;charset=utf-8," + csvData;
-                        $scope.export = "data:application/octet-stream;charset=utf-8;base64,U29tZSBjb250ZW50";
-                    } 
+                    
+                    $scope.export   = dataProvider.toFile(data);
                 }, true);
             }
         ]

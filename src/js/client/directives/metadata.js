@@ -22,8 +22,8 @@ angular.module('www.tekuchi.converter').directive('metadata', [function()       
                         if (field.type && field.type.special && field.type.name == 'metadata')  metaFields.push(field);
                     }
                     if (!metaFields.length || !blockField || !floorField || !nameField) return;
-                    console.log(metaFields.length, blockField, floorField, nameField);
                     
+                    var fileData = [];
                     for (var i in dataProvider.rows)                            {
                         var row     = dataProvider.rows[i];
                         var block   = row[blockField.name];
@@ -35,16 +35,21 @@ angular.module('www.tekuchi.converter').directive('metadata', [function()       
                             var meta    = field.extra || field.name;
                             var data    = row[field.name]; 
                             if (data)                                           {
-                                $scope.metadata.push({
+                                var item =                                      {
                                     block:  block,
                                     floor:  floor,
                                     name:   name,
                                     meta:   meta,
                                     data:   data
-                                });
+                                }
+                                $scope.metadata.push(item);
+                                fileData.push(item);
                             }
                         }
                     }
+                    
+                    $scope.export   = dataProvider.toFile(fileData);
+                    
                 }, true);
             }
         ]

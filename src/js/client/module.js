@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('www.tekuchi.converter', []);
+angular.module('www.tekuchi.converter', [], function ($compileProvider)         {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data|blob):/);
+});
+
+
+
 
 /**
  * 
@@ -41,7 +46,5 @@ angular.module('www.tekuchi.converter').run(['$window',
         menu.append(new gui.MenuItem({ type: 'checkbox', label: 'box1' }));
         
         tray.menu   = menu;
-        
-        require('nw.gui').Window.get().showDevTools();
     }
 ])

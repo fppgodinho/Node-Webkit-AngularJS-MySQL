@@ -1,5 +1,6 @@
 angular.module('www.tekuchi.converter').factory('dataProvider', [
     function()                                                                  {
+        var csv         = require('to-csv');
         var service     = {};
         var rows        = [];
         
@@ -28,6 +29,8 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
         
         service.types   = [
             {name: '-',                 special:true},
+            {name: 'model',             special:true},
+            {name: 'metadata',          special:true},
             {name: 'block',             order: 1,   field: '',  weight: 0},
             {name: 'floor',             order: 2,   field: '',  weight: 0},
             {name: 'name',              order: 3,   field: '',  weight: 0},
@@ -56,9 +59,7 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
             {name: 'rentAnnual',        order: 26,  field: '',  weight: 0},
             {name: 'netYeld',           order: 27,  field: '',  weight: 0},
             {name: 'grossYeld',         order: 28,  field: '',  weight: 0},
-            {name: 'pricePerSqrFeet',   order: 29,  field: '',  weight: 0},
-            {name: 'model',             special:true},
-            {name: 'metadata',          special:true}
+            {name: 'pricePerSqrFeet',   order: 29,  field: '',  weight: 0}
         ];
         //
         service.fields  = [];
@@ -73,7 +74,7 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
             for (var property in template) service.fields.push({name: property, value: template[property], type: chooseTypeFor(property), extra: ''});
             for (var i in data) service.rows.push(data[i]);
         };
-
+        
         service.translateAvail = function(val)                                  {
             var parsedVal = (val + '').toLowerCase();
             
@@ -88,7 +89,13 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
                 default:    return val; 
             }
         };
-        
+
+        service.toFile = function(data)                                         {
+            if (!data || !data.length) return '';
+            var csvData     = csv(data); 
+            var blob        = new Blob([csvData], {type: "application/csv"});
+            return URL.createObjectURL(blob);
+        }
         
         //
         return service;

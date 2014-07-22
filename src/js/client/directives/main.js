@@ -11,6 +11,12 @@ angular.module('www.tekuchi.converter').directive('main', [function()           
                 $scope.$watchCollection(function(){ return dataProvider.fields;}, function() {
                     $scope.connected    = dataProvider.fields.length?true:false;
                 });
+                
+                var nwWindow  = require('nw.gui').Window.get();
+                $scope.switchDebug = function() {
+                    if (!nwWindow.isDevToolsOpen()) nwWindow.showDevTools();
+                    else nwWindow.closeDevTools();
+                };
             }
         ]
     };

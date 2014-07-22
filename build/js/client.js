@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('www.tekuchi.converter', []);
+angular.module('www.tekuchi.converter', [], function ($compileProvider)         {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data|blob):/);
+});
+
+
+
 
 /**
  * 
@@ -41,8 +46,6 @@ angular.module('www.tekuchi.converter').run(['$window',
         menu.append(new gui.MenuItem({ type: 'checkbox', label: 'box1' }));
         
         tray.menu   = menu;
-        
-        require('nw.gui').Window.get().showDevTools();
     }
 ])
 angular.module('www.tekuchi.converter').factory('config', [
@@ -55,6 +58,7 @@ angular.module('www.tekuchi.converter').factory('config', [
 
 angular.module('www.tekuchi.converter').factory('dataProvider', [
     function()                                                                  {
+        var csv         = require('to-csv');
         var service     = {};
         var rows        = [];
         
@@ -83,6 +87,8 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
         
         service.types   = [
             {name: '-',                 special:true},
+            {name: 'model',             special:true},
+            {name: 'metadata',          special:true},
             {name: 'block',             order: 1,   field: '',  weight: 0},
             {name: 'floor',             order: 2,   field: '',  weight: 0},
             {name: 'name',              order: 3,   field: '',  weight: 0},
@@ -111,9 +117,7 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
             {name: 'rentAnnual',        order: 26,  field: '',  weight: 0},
             {name: 'netYeld',           order: 27,  field: '',  weight: 0},
             {name: 'grossYeld',         order: 28,  field: '',  weight: 0},
-            {name: 'pricePerSqrFeet',   order: 29,  field: '',  weight: 0},
-            {name: 'model',             special:true},
-            {name: 'metadata',          special:true}
+            {name: 'pricePerSqrFeet',   order: 29,  field: '',  weight: 0}
         ];
         //
         service.fields  = [];
@@ -128,7 +132,7 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
             for (var property in template) service.fields.push({name: property, value: template[property], type: chooseTypeFor(property), extra: ''});
             for (var i in data) service.rows.push(data[i]);
         };
-
+        
         service.translateAvail = function(val)                                  {
             var parsedVal = (val + '').toLowerCase();
             
@@ -143,12 +147,66 @@ angular.module('www.tekuchi.converter').factory('dataProvider', [
                 default:    return val; 
             }
         };
-        
+
+        service.toFile = function(data)                                         {
+            if (!data || !data.length) return '';
+            var csvData     = csv(data); 
+            var blob        = new Blob([csvData], {type: "application/csv"});
+            return URL.createObjectURL(blob);
+        }
         
         //
         return service;
     }
 ]);
+
+angular.module('www.tekuchi.converter').directive('apartments', [function()     {
+    return {
+        restrict:       'E',
+        scope:          {},
+        templateUrl:    'templates/directives/apartments.html',
+        controller:     ['$scope', 'dataProvider',
+            function($scope, dataProvider)                                      {
+                //
+                $scope.fields       = [];
+                $scope.rows         = [];
+                //
+                $scope.$watch(function(){ return dataProvider.fields;}, function() {
+                    $scope.fields.length    = 0;
+                    var state           = null;
+                    
+                    for (var i in dataProvider.fields)                          {
+                        var field   = dataProvider.fields[i];
+                        if (field.type && !field.type.special)                  {
+                            $scope.fields.push(field)
+                            if (field.type.name == 'state') state = field; 
+                        }
+                    }
+                    $scope.fields.sort(function(a, b)                           {
+                        return a.type.order - b.type.order;
+                    });
+                    
+                    var data            = [];
+                    $scope.rows.length  = 0;
+                    for (var i in dataProvider.rows)                            {
+                        var row             = angular.copy(dataProvider.rows[i]);
+                        if (state) row[state.name] = dataProvider.translateAvail(row[state.name]);
+                        $scope.rows.push(row);
+                        
+                        var item    = {};
+                        for (var j in $scope.fields)                            {
+                            var field = $scope.fields[j];
+                            item[field.type.name] = row[field.name];
+                        }
+                        data.push(item);
+                    }
+                    
+                    $scope.export   = dataProvider.toFile(data);
+                }, true);
+            }
+        ]
+    };
+}]);
 
 angular.module('www.tekuchi.converter').directive('connection', [function()     {
     return {
@@ -236,6 +294,12 @@ angular.module('www.tekuchi.converter').directive('main', [function()           
                 $scope.$watchCollection(function(){ return dataProvider.fields;}, function() {
                     $scope.connected    = dataProvider.fields.length?true:false;
                 });
+                
+                var nwWindow  = require('nw.gui').Window.get();
+                $scope.switchDebug = function() {
+                    if (!nwWindow.isDevToolsOpen()) nwWindow.showDevTools();
+                    else nwWindow.closeDevTools();
+                };
             }
         ]
     };
@@ -265,8 +329,8 @@ angular.module('www.tekuchi.converter').directive('metadata', [function()       
                         if (field.type && field.type.special && field.type.name == 'metadata')  metaFields.push(field);
                     }
                     if (!metaFields.length || !blockField || !floorField || !nameField) return;
-                    console.log(metaFields.length, blockField, floorField, nameField);
                     
+                    var fileData = [];
                     for (var i in dataProvider.rows)                            {
                         var row     = dataProvider.rows[i];
                         var block   = row[blockField.name];
@@ -278,69 +342,74 @@ angular.module('www.tekuchi.converter').directive('metadata', [function()       
                             var meta    = field.extra || field.name;
                             var data    = row[field.name]; 
                             if (data)                                           {
-                                $scope.metadata.push({
+                                var item =                                      {
                                     block:  block,
                                     floor:  floor,
                                     name:   name,
                                     meta:   meta,
                                     data:   data
-                                });
+                                }
+                                $scope.metadata.push(item);
+                                fileData.push(item);
                             }
                         }
                     }
+                    
+                    $scope.export   = dataProvider.toFile(fileData);
+                    
                 }, true);
             }
         ]
     };
 }]);
 
-angular.module('www.tekuchi.converter').directive('normal', [function()         {
+angular.module('www.tekuchi.converter').directive('models', [function()         {
     return {
         restrict:       'E',
         scope:          {},
-        templateUrl:    'templates/directives/normal.html',
+        templateUrl:    'templates/directives/models.html',
         controller:     ['$scope', 'dataProvider',
             function($scope, dataProvider)                                      {
-                var csv     = require('to-csv');
-                //
-                $scope.fields       = [];
-                $scope.rows         = [];
+                $scope.models           = [];
+                $scope.circuits         = [];
+                $scope.selected         = null
+                var blockField          = null;
+                var floorField          = null;
+                var nameField           = null;
                 //
                 $scope.$watch(function(){ return dataProvider.fields;}, function() {
-                    $scope.fields.length    = 0;
-                    var state           = null;
+                    $scope.models.length    = 0;
                     
                     for (var i in dataProvider.fields)                          {
                         var field   = dataProvider.fields[i];
-                        if (field.type && !field.type.special)                  {
-                            $scope.fields.push(field)
-                            if (field.type.name == 'state') state = field; 
-                        }
+                        if (field.type && !field.type.special  && field.type.name == 'block')   blockField  = field;
+                        if (field.type && !field.type.special  && field.type.name == 'floor')   floorField  = field;
+                        if (field.type && !field.type.special  && field.type.name == 'name')    nameField   = field;
+                        if (field.type && field.type.special && field.type.name == 'model')     $scope.models.push({name: field.name, circuits:[]});
                     }
-                    $scope.fields.sort(function(a, b)                           {
-                        return a.type.order - b.type.order;
-                    });
                     
-                    var data            = [];
-                    $scope.rows.length  = 0;
-                    for (var i in dataProvider.rows)                            {
-                        var row             = angular.copy(dataProvider.rows[i]);
-                        if (state) row[state.name] = dataProvider.translateAvail(row[state.name]);
-                        $scope.rows.push(row);
-                        
-                        var item    = {};
-                        for (var j in $scope.fields)                            {
-                            var field = $scope.fields[j];
-                            item[field.type.name] = row[field.name];
-                        }
-                        data.push(item);
-                    }
-                    if (data.length)                                            {
-                        var csvData = csv(data);
-                        // $scope.export = "data:text/json;charset=utf-8," + csvData;
-                        $scope.export = "data:application/octet-stream;charset=utf-8;base64,U29tZSBjb250ZW50";
-                    } 
+                    $scope.selected         = $scope.models.length?$scope.models[0]:null;
                 }, true);
+                
+                $scope.$watch('selected', function()                            {
+                    $scope.circuits.length  = 0;
+                    
+                    var fileData            = [];
+                    for (var i in dataProvider.rows)                            {
+                        var row         = dataProvider.rows[i];
+                        var item        =                                       {
+                            block:      row[blockField.name],
+                            floor:      row[floorField.name],
+                            name:       row[nameField.name],
+                            circuits:   row[$scope.selected.name]
+                        }
+                        $scope.circuits.push(item);
+                        fileData.push(item);
+                    }
+
+                    $scope.export   = dataProvider.toFile(fileData);
+                });
+                
             }
         ]
     };

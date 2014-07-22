@@ -8,7 +8,7 @@
     "window":         {
         "title":            "Tekuchi Converter",
         "icon":             "media/16x16.png",
-        "toolbar":          true,
+        "toolbar":          false,
         "frame":            true,
         "width":            800,
         "height":           500,

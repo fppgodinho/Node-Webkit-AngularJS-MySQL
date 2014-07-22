@@ -1,15 +1,18 @@
 <div id="MAIN">
     <div id="MENU">
         <button type="button" data-ng-click="selected='connection'" data-ng-disabled="selected=='connection'">CONNECTION</button>
-        <button type="button" data-ng-click="selected='raw'"        data-ng-disabled="!connected || selected=='raw'">RAW DATA</button>
         <button type="button" data-ng-click="selected='fields'"     data-ng-disabled="!connected || selected=='fields'">FIELDS</button>
-        <button type="button" data-ng-click="selected='normal'"     data-ng-disabled="!connected || selected=='normal'">NORMAL</button>
+        <button type="button" data-ng-click="selected='apartments'" data-ng-disabled="!connected || selected=='apartments'">APARTMENTS</button>
         <button type="button" data-ng-click="selected='metadata'"   data-ng-disabled="!connected || selected=='metadata'">METADATA</button>
+        <button type="button" data-ng-click="selected='models'"     data-ng-disabled="!connected || selected=='models'">MODELS</button>
+        <button type="button" data-ng-click="selected='raw'"        data-ng-disabled="!connected || selected=='raw'">RAW DATA</button>
+        <button type="button" data-ng-click="switchDebug()" >DEBUG</button>
     </div>
     
     <data-connection    id="CONNECTION" data-ng-show="selected=='connection'" ></data-connection>
-    <data-raw           id="RAW"        data-ng-show="selected=='raw'" ></data-raw>
     <data-fields        id="FIELDS"     data-ng-show="selected=='fields'" ></data-fields>
-    <data-normal        id="NORMAL"     data-ng-show="selected=='normal'" ></data-normal>
+    <data-apartments    id="APARTMENTS" data-ng-show="selected=='apartments'" ></data-apartments>
     <data-metadata      id="METADATA"   data-ng-show="selected=='metadata'" ></data-metadata>
+    <data-models        id="MODELS"     data-ng-show="selected=='models'" ></data-models>
+    <data-raw           id="RAW"        data-ng-show="selected=='raw'" ></data-raw>
 </div>
